@@ -82,6 +82,7 @@ foreach ($con as $key => $value) {
             if (!is_numeric($value) and !$temp) {
                 $str .= $value;
                 $count--;
+                $value = '';
             }
         $RSS->AddItem((($con[$key-1] < 60 and is_numeric($con[$key-1]))?'(挂科)':'').iconv('GBK','UTF-8',$con[$key-5].':'.$con[$key-1]),'http://'.$_SERVER['SERVER_NAME'].$_SERVER['DOCUMENT_URI'].htmlentities('?'.$_SERVER['QUERY_STRING'].'&class='.iconv('GBK','UTF-8',$con[$key-7])),iconv('GBK','UTF-8',$str),date("Y-M-D h:m:s"));
         $str = '';
