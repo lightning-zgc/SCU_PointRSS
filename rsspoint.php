@@ -77,14 +77,20 @@ if($class) {
 
 $RSS= new RSS("成绩",urlencode('http://prismx.cc/jwc/mypoint.php'),"","");
 foreach ($con as $key => $value) {
+    $temp = mb_strstr($value,iconv('UTF-8','GBK','要求修读最低学分'));
         if ($count == 7) {
-        $RSS->AddItem(($con[$key-1] < 60?'(挂科)':'').iconv('GBK','UTF-8',$con[$key-5].':'.$con[$key-1]),'http://'.$_SERVER['SERVER_NAME'].$_SERVER['DOCUMENT_URI'].htmlentities('?'.$_SERVER['QUERY_STRING'].'&class='.iconv('GBK','UTF-8',$con[$key-7])),iconv('GBK','UTF-8',$str),date("Y-M-D h:m:s"));
+            if (!is_numeric($value) and !$temp) {
+                $str .= $value;
+                $count--;
+            }
+        $RSS->AddItem((($con[$key-1] < 60 and is_numeric($con[$key-1]))?'(挂科)':'').iconv('GBK','UTF-8',$con[$key-5].':'.$con[$key-1]),'http://'.$_SERVER['SERVER_NAME'].$_SERVER['DOCUMENT_URI'].htmlentities('?'.$_SERVER['QUERY_STRING'].'&class='.iconv('GBK','UTF-8',$con[$key-7])),iconv('GBK','UTF-8',$str),date("Y-M-D h:m:s"));
         $str = '';
-        $count = 0;
+        $count -= 7;
+        // if (is_numeric($con[$key+1])) continue;
         }
         $count++;
         $str .= $value.' ';
-    if (mb_strstr($value,iconv('UTF-8','GBK','要求修读最低学分')))break;
+    if ($temp)break;
 
 }
 
