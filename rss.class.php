@@ -6,7 +6,7 @@
 // +----------------------------------------------------------------------
 // +----------------------------------------------------------------------
 // | Author: yhustc <yhustc@gmail.com>
-// | A little change by : lightning_zgc
+// | Another: lightning-zgc.com <lightning-zgc.com>
 // +----------------------------------------------------------------------
 // $Id$
 
@@ -64,7 +64,7 @@ class RSS
      * @access protected
      +----------------------------------------------------------
      */
-    protected $language = 'zh_CN';
+    protected $language = 'zh';
     /**
      +----------------------------------------------------------
      * RSS文档创建日期，默认为今天
@@ -76,7 +76,7 @@ class RSS
     protected $pubDate = '';
     protected $lastBuildDate = '';
 
-    protected $generator = 'YBlog RSS Generator';
+    protected $generator = 'RSS Generator';
 
     /**
      +----------------------------------------------------------
@@ -87,6 +87,7 @@ class RSS
      +----------------------------------------------------------
      */
     protected $items = array();
+    protected $this_url = '';
 
     /**
      +----------------------------------------------------------
@@ -106,8 +107,9 @@ class RSS
         $this->channel_link = $link;
         $this->channel_description = $description;
         $this->channel_imgurl = $imgurl;
-        $this->pubDate = Date('Y-m-d H:i:s', time());
-        $this->lastBuildDate = Date('Y-m-d H:i:s', time());
+        $this->pubDate = gmdate(DATE_RFC822);
+        $this->lastBuildDate = gmdate(DATE_RFC822);
+        $this->this_url = 'http://'.$_SERVER['SERVER_NAME'].$_SERVER['DOCUMENT_URI'].htmlentities('?'.$_SERVER['QUERY_STRING']);
     }
 
     /**
@@ -153,29 +155,30 @@ class RSS
      */
     public function Fetch()
     {
-        $rss = '<?xml version="1.0" encoding="utf-8" ?>rn';
-        $rss = '<rss version="2.0">rn';
-        $rss .= "<channel>rn";
-        $rss .= "<title><![CDATA[{$this->channel_title}]]></title>rn";
-        $rss .= "<description><![CDATA[{$this->channel_description}]]></description>rn";
-        $rss .= "<link>{$this->channel_link}</link>rn";
-        $rss .= "<language>{$this->language}</language>rn";
+        $rss = '<?xml version="1.0" encoding="utf-8" ?>';
+        $rss = '<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">';
+        $rss .= "<channel>";
+        $rss .= "<title><![CDATA[{$this->channel_title}]]></title>";
+        $rss .= "<description><![CDATA[{$this->channel_description}]]></description>";
+        $rss .= "<link>{$this->channel_link}</link>";
+        $rss .= "<language>{$this->language}</language>";
+        $rss .= "<atom:link href=\"{$this->this_url}\" rel=\"self\" type=\"application/rss+xml\" />";
 
         if (!empty($this->pubDate))
-            $rss .= "<pubDate>{$this->pubDate}</pubDate>rn";
+            $rss .= "<pubDate>{$this->pubDate}</pubDate>";
         if (!empty($this->lastBuildDate))
-            $rss .= "<lastBuildDate>{$this->lastBuildDate}</lastBuildDate>rn";
+            $rss .= "<lastBuildDate>{$this->lastBuildDate}</lastBuildDate>";
         if (!empty($this->generator))
-            $rss .= "<generator>{$this->generator}</generator>rn";
+            $rss .= "<generator>{$this->generator}</generator>";
 
-        $rss .= "<ttl>5</ttl>rn";
+        $rss .= "<ttl>5</ttl>";
 
         if (!empty($this->channel_imgurl)) {
-            $rss .= "<image>rn";
-            $rss .= "<title><![CDATA[{$this->channel_title}]]></title>rn";
-            $rss .= "<link>{$this->channel_link}</link>rn";
-            $rss .= "<url>{$this->channel_imgurl}</url>rn";
-            $rss .= "</image>rn";
+            $rss .= "<image>";
+            $rss .= "<title><![CDATA[{$this->channel_title}]]></title>";
+            $rss .= "<link>{$this->channel_link}</link>";
+            $rss .= "<url>{$this->channel_imgurl}</url>";
+            $rss .= "</image>";
         }
 
         for ($i = 0; $i < count($this->items); $i++) {
@@ -184,6 +187,7 @@ class RSS
             $rss .= "<link>".$this->items[$i]['link']."</link>";
             $rss .= "<description><![CDATA[".$this->items[$i]['description']."]]></description>";
             $rss .= "<pubDate>".$this->items[$i]['pubDate']."</pubDate>";
+            $rss .= "<guid>".$this->items[$i]['link']."</guid>";
             $rss .= "</item>";
         }
 
