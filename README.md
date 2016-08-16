@@ -6,3 +6,6 @@
 
 ---
 iOS端RSS阅读器特别推荐：RssReader、Newsify
+
+---
+附：ISO 639.2 语言表：<a href="http://www.loc.gov/standards/iso639-2/php/code_list.php”  target="_blank">链接</a>  
